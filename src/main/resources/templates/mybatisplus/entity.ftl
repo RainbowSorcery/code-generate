@@ -1,6 +1,7 @@
 package ${packageName}.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 
 @TableName("${tableName}")
 public class ${className} {
@@ -8,15 +9,16 @@ public class ${className} {
     ${item.annotation}
     private ${item.type} ${item.name};
 
-
-    public Long get${item.name} {
-    return ${item.name};
-    }
-
-    public void setId(Long id) {
-    this.id = ${item.name};
-    }
 </#list>
 
+<#list filedList as item>
+    public ${item.type}  get${item.getSetName}() {
+        return this.${item.name};
+    }
+
+    public void set${item.getSetName}(${item.type} ${item.name}) {
+        this.${item.name} = ${item.name};
+    }
+</#list>
 
 }

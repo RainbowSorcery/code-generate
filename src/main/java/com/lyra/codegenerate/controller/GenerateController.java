@@ -9,6 +9,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +29,9 @@ import java.util.Map;
 public class GenerateController {
     @PostMapping("/mybatisPlus")
     @Operation(summary = "生成MybatisPlus代码")
-    public void generatorMysqlSourceCode(@RequestBody MysqlEntity mysqlEntity) {
+    public void generatorMysqlSourceCode(@RequestBody MysqlEntity mysqlEntity, HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+
         // 1. 连接MySQL
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://" + mysqlEntity.getIp() + ":" + mysqlEntity.getPort() + "/information_schema");
@@ -43,24 +47,30 @@ public class GenerateController {
         String className = StrUtil.toCamelCase(mysqlEntity.getTableName());
         templatePramMap.put("className", StrUtil.upperFirst(className));
 
+        // 设置导入包字段 Date、BigDecimal实体类
+        List<String> importPackageList = new ArrayList<>();
+        templatePramMap.put("importPackageList", importPackageList);
+
+
         // 2. 获取表字段
-        List<Map<String, Object>> maps = jdbcTemplate.queryForList("select TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_COMMENT, COLUMN_KEY from COLUMNS where TABLE_NAME = ?", mysqlEntity.getTableName());
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList("select TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_COMMENT, COLUMN_KEY from COLUMNS where TABLE_NAME = ? and TABLE_SCHEMA = ?", mysqlEntity.getTableName(), mysqlEntity.getDatabase());
 
 
         List<MyBatisEntityFiled> myBatisEntityFileds = new ArrayList<>();
-        templatePramMap.put("filedList", templatePramMap);
 
         for (Map<String, Object> map : maps) {
             MyBatisEntityFiled myBatisEntityFiled = new MyBatisEntityFiled();
-            myBatisEntityFiled.setAnnotation("");
-            // 3. 获取表名称设置到model tableName中
-            myBatisEntityFiled.setName(StrUtil.toCamelCase(map.get("COLUMN_NAME").toString()));
-            // 4. 将表名称下划线转成驼峰设置到className中
-            myBatisEntityFiled.setType(MySQLJavaTypeMappingEnum.MySQlTypeToJavaType(map.get("DATA_TYPE").toString()));
-            // 5. 获取字段名称 将字段下划线转驼峰设置到filed中
+            // 3. 获取字段名称 将字段名称下划线转驼峰并首字母大写
+            String name = StrUtil.toCamelCase(map.get("COLUMN_NAME").toString());
+            myBatisEntityFiled.setGetSetName(StrUtil.upperFirst(name));
+            myBatisEntityFiled.setName(name);
 
-            // 5. 获取字段注释 将注释设置到filed中
-            // 6. 获取字段类型 将字段类型设置到filed中
+            // 4. 设置swagger注解 注解内容为表注释
+            myBatisEntityFiled.setAnnotation("@ApiModelProperty(value = \"" + map.get("COLUMN_COMMENT") + "\", position = 1)");
+
+            // 5. 根据MySQL数据类型与Java数据类型映射表 设置数据类型
+            myBatisEntityFiled.setType(MySQLJavaTypeMappingEnum.MySQlTypeToJavaType(map.get("DATA_TYPE").toString()));
+
             myBatisEntityFileds.add(myBatisEntityFiled);
         }
 
@@ -70,8 +80,10 @@ public class GenerateController {
         try {
             configuration.setDirectoryForTemplateLoading(new File("D:\\java-project\\code-generate\\src\\main\\resources\\templates\\mybatisplus"));
             configuration.setDefaultEncoding("UTF-8");
+
             Template template = configuration.getTemplate("entity.ftl");
-            template.process(templatePramMap, new FileWriter("d://test.java"));
+            PrintWriter writer = response.getWriter();
+            template.process(templatePramMap, writer);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -2,3 +2,5 @@ spring:
   freemarker:
     cache: false
     suffix: .flt
+server:
+  port: 5600

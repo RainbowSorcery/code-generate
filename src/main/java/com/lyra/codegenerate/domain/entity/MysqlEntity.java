@@ -16,6 +16,16 @@ public class MysqlEntity extends BaseEntity {
     @Schema(description = "表名称")
     private String tableName;
 
+    @Schema(description = "数据库名称")
+    private String database;
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
 
     public String getIp() {
         return ip;

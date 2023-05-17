@@ -1,5 +1,7 @@
 package com.lyra.codegenerate.enums;
 
+import java.math.BigDecimal;
+
 /**
  * MySQL数据类型与Java数据类型映射枚举
  */
@@ -23,6 +25,7 @@ public enum MySQLJavaTypeMappingEnum {
     FLOAT("FLOAT", "Float"),
     DATE("DATE", "Date"),
     DATETIME("DATETIME", "Date"),//java.util.Date
+    decimal("DECIMAL", "BigDecimal"),
     TIMESTAMP("TIMESTAMP", "Timestamp");//java.sql.Timestamp
 
     public static String MySQlTypeToJavaType(String mySQLType) {

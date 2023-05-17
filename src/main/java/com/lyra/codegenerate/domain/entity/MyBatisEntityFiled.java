@@ -17,6 +17,17 @@ public class MyBatisEntityFiled {
     @Schema(description = "是否为主键")
     private Boolean pk;
 
+    @Schema(description = "getSet字段名称")
+    private String getSetName;
+
+    public String getGetSetName() {
+        return getSetName;
+    }
+
+    public void setGetSetName(String getSetName) {
+        this.getSetName = getSetName;
+    }
+
     public Boolean getPk() {
         return pk;
     }
