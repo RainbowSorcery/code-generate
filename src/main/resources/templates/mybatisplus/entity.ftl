@@ -3,6 +3,10 @@ package ${packageName}.domain.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 
+<#list importPackageSet as item>
+${item}
+</#list>
+
 @TableName("${tableName}")
 public class ${className} {
 <#list filedList as item>

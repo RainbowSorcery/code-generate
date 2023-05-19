@@ -4,3 +4,6 @@ spring:
     suffix: .flt
 server:
   port: 5600
+logging:
+  level:
+    root: debug

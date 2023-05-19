@@ -1,8 +1,9 @@
-package com.lyra.codegenerate.domain.entity;
+package com.lyra.codegenerate.domain.entity.dto;
 
+import com.lyra.codegenerate.domain.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class MysqlEntity extends BaseEntity {
+public class MysqlDTO extends BaseEntity {
     @Schema(description = "ip")
     private String ip;
 

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
  * MySQL数据类型与Java数据类型映射枚举
  */
 public enum MySQLJavaTypeMappingEnum {
-    VARCHAR("VARCHAR", "String"),
+    VARCHAR("VARCHAR", "String", "import java.math.BigDecimal;"),
     CHAR("CHAR", "String"),
     VARCHAR2("VARCHAR2", "String"),
     NVARCHAR("NVARCHAR", "String"),
@@ -23,7 +23,7 @@ public enum MySQLJavaTypeMappingEnum {
     NUMBER("NUMBER", "Long"),
     DOUBLE("DOUBLE", "Double"),
     FLOAT("FLOAT", "Float"),
-    DATE("DATE", "Date"),
+    DATE("DATE", "Date", "import java.util.Date;"),
     DATETIME("DATETIME", "Date"),//java.util.Date
     decimal("DECIMAL", "BigDecimal"),
     TIMESTAMP("TIMESTAMP", "Timestamp");//java.sql.Timestamp
@@ -38,9 +38,34 @@ public enum MySQLJavaTypeMappingEnum {
         return null;
     }
 
+    public static String javaTypeToPackageName(String javaType) {
+        for (MySQLJavaTypeMappingEnum value : MySQLJavaTypeMappingEnum.values()) {
+            if (value.javaType.equalsIgnoreCase(javaType)) {
+                return value.packageName;
+            }
+        }
+
+        return null;
+
+    }
+
     private String mySQLType;
     private String javaType;
+    private String packageName;
 
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    MySQLJavaTypeMappingEnum(String mySQLType, String javaType, String packageName) {
+        this.mySQLType = mySQLType;
+        this.javaType = javaType;
+        this.packageName = packageName;
+    }
 
     MySQLJavaTypeMappingEnum(String mySQLType, String javaType) {
         this.mySQLType = mySQLType;
