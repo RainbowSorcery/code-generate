@@ -1,5 +1,6 @@
 package com.lyra.codegenerate.service;
 
+import com.lyra.codegenerate.domain.entity.TableInfo;
 import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
 
 /**
@@ -10,5 +11,9 @@ import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
 public interface IGenerateService {
     String entity(MysqlDTO mysqlDTO);
 
-    String dao();
+    String dao(MysqlDTO mysqlDTO);
+
+    String service(MysqlDTO mysqlDTO);
+
+    String controller(MysqlDTO mysqlDTO);
 }

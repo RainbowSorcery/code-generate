@@ -20,6 +20,50 @@ public class MysqlDTO extends BaseEntity {
     @Schema(description = "数据库名称")
     private String database;
 
+    @Schema(description = "模板组名称")
+    private String templateGroup;
+
+    @Schema(description = "模板名称")
+    public String templateName;
+
+    @Schema(description = "swagger版本 0: 不适应swagger; 1: swagger2; 2: swagger3")
+    private Integer swaggerStatus;
+
+    @Schema(description = "生成类型")
+    private Integer generateTypeCode;
+
+    public Integer getGenerateTypeCode() {
+        return generateTypeCode;
+    }
+
+    public void setGenerateTypeCode(Integer generateTypeCode) {
+        this.generateTypeCode = generateTypeCode;
+    }
+
+    public Integer getSwaggerStatus() {
+        return swaggerStatus;
+    }
+
+    public void setSwaggerStatus(Integer swaggerStatus) {
+        this.swaggerStatus = swaggerStatus;
+    }
+
+    public String getTemplateGroup() {
+        return templateGroup;
+    }
+
+    public void setTemplateGroup(String templateGroup) {
+        this.templateGroup = templateGroup;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
     public String getDatabase() {
         return database;
     }
