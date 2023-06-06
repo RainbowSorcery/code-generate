@@ -6,6 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 
 @Mapper
-public interface AttachmentMapper extends BaseMapper<${className}> {
+public interface ${className}Mapper extends BaseMapper<${className}> {
 
 }

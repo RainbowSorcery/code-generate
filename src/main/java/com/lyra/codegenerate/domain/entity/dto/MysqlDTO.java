@@ -20,8 +20,7 @@ public class MysqlDTO extends BaseEntity {
     @Schema(description = "数据库名称")
     private String database;
 
-    @Schema(description = "模板组名称")
-    private String templateGroup;
+
 
     @Schema(description = "模板名称")
     public String templateName;
@@ -47,15 +46,6 @@ public class MysqlDTO extends BaseEntity {
     public void setSwaggerStatus(Integer swaggerStatus) {
         this.swaggerStatus = swaggerStatus;
     }
-
-    public String getTemplateGroup() {
-        return templateGroup;
-    }
-
-    public void setTemplateGroup(String templateGroup) {
-        this.templateGroup = templateGroup;
-    }
-
     public String getTemplateName() {
         return templateName;
     }

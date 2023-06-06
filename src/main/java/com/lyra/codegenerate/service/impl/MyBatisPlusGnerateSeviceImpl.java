@@ -2,7 +2,6 @@ package com.lyra.codegenerate.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.lyra.codegenerate.domain.entity.MyBatisEntityFiled;
-import com.lyra.codegenerate.domain.entity.TableInfo;
 import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
 import com.lyra.codegenerate.enums.MySQLJavaTypeMappingEnum;
 import com.lyra.codegenerate.service.IGenerateService;
@@ -33,6 +32,9 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
 
     @Override
     public String entity(MysqlDTO mysqlDTO) {
+        if (StrUtil.isBlank(mysqlDTO.getTemplateName())) {
+            throw new RuntimeException("模板类型为空");
+        }
 
         // 1. 连接MySQL
         HikariDataSource dataSource = new HikariDataSource();
@@ -89,7 +91,6 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
         templatePramMap.put("importPackageSet", importPackageSet);
 
         try {
-            //            return FreeMakerUtils.writeToTemplate(configuration, "templates/mybatisplus", "entity", templatePramMap);
             return freeMakerUtils.writeToTemplate(configuration, "/templates/mybatisplus", "entity.ftl", templatePramMap);
         } catch (Exception e) {
             log.error("实体类生成失败，错误信息:{}", e.getMessage());
@@ -100,26 +101,40 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
 
     @Override
     public String dao(MysqlDTO mysqlDTO) {
-//        if (StrUtil.isBlank(ca)) {
-//            throw new RuntimeException("类名称为空");
-//        }
-//
-//        Map<String, Object> templatePramMap = new HashMap<>();
-//        templatePramMap.put("packageName", this.packageName);
-//        templatePramMap.put("className", this.className);
-//
-//        try {
-//            return freeMakerUtils.writeToTemplate(configuration, "/templates/mybatisplus", "dao.ftl", templatePramMap);
-//        } catch (Exception e) {
-//            log.error("实体类生成失败，错误信息:{}", e.getMessage());
-//            return null;
-//        }
-        return null;
+        if (StrUtil.isBlank(mysqlDTO.getTableName())) {
+            throw new RuntimeException("类名称为空");
+        }
+
+        Map<String, Object> templatePramMap = new HashMap<>();
+        templatePramMap.put("packageName", mysqlDTO.getPackageName());
+        String className = StrUtil.upperFirst(StrUtil.toCamelCase(mysqlDTO.getTableName()));
+        templatePramMap.put("className", className);
+
+        try {
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateName(), "dao.ftl", templatePramMap);
+        } catch (Exception e) {
+            log.error("实体类生成失败，错误信息:{}", e.getMessage());
+            return null;
+        }
     }
 
     @Override
     public String service(MysqlDTO mysqlDTO) {
-        return null;
+        if (StrUtil.isBlank(mysqlDTO.getTableName())) {
+            throw new RuntimeException("类名称为空");
+        }
+
+        Map<String, Object> templatePramMap = new HashMap<>();
+        templatePramMap.put("packageName", mysqlDTO.getPackageName());
+        String className = StrUtil.upperFirst(StrUtil.toCamelCase(mysqlDTO.getTableName()));
+        templatePramMap.put("className", className);
+
+        try {
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateName(), "service.ftl", templatePramMap);
+        } catch (Exception e) {
+            log.error("实体类生成失败，错误信息:{}", e.getMessage());
+            return null;
+        }
     }
 
     @Override
