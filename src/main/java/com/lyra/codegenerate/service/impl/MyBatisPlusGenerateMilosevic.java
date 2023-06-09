@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.lyra.codegenerate.domain.entity.MyBatisEntityFiled;
 import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
 import com.lyra.codegenerate.enums.MySQLJavaTypeMappingEnum;
+import com.lyra.codegenerate.enums.SwaggerStatusEnums;
 import com.lyra.codegenerate.service.IGenerateService;
 import com.lyra.codegenerate.utils.FreeMakerUtils;
 import com.zaxxer.hikari.HikariDataSource;
@@ -22,8 +23,8 @@ import java.util.*;
  * @Description
  */
 @Service
-public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
-    private static final Logger log = LoggerFactory.getLogger(MyBatisPlusGnerateSeviceImpl.class);
+public class MyBatisPlusGenerateMilosevic implements IGenerateService {
+    private static final Logger log = LoggerFactory.getLogger(MyBatisPlusGenerateMilosevic.class);
     @Autowired
     private Configuration configuration;
 
@@ -32,7 +33,7 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
 
     @Override
     public String entity(MysqlDTO mysqlDTO) {
-        if (StrUtil.isBlank(mysqlDTO.getTemplateName())) {
+        if (StrUtil.isBlank(mysqlDTO.getTemplateGroup())) {
             throw new RuntimeException("模板类型为空");
         }
 
@@ -53,6 +54,10 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
 
         // 设置导入包字段 Date、BigDecimal实体类
         Set<String> importPackageSet = new HashSet<>();
+        if (mysqlDTO.getSwaggerStatus().equals(SwaggerStatusEnums.SWAGGER_3.getCode())) {
+            importPackageSet.add("import io.swagger.v3.oas.annotations.media.Schema;");
+        }
+
         templatePramMap.put("importPackageList", importPackageSet);
 
 
@@ -71,7 +76,14 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
             myBatisEntityFiled.setName(name);
 
             // 4. 设置swagger注解 注解内容为表注释
-            myBatisEntityFiled.setAnnotation("@Schema(description = \"" + map.get("COLUMN_COMMENT") + "\", position = " + (i + 1) + ")");
+            List<String> annoantaionList = new ArrayList<>();
+
+            annoantaionList.add("@Schema(description = \"" + map.get("COLUMN_COMMENT") + "\"" + ")");
+            if (map.get("COLUMN_KEY").toString().equalsIgnoreCase("PRI")) {
+                annoantaionList.add("@Id");
+                importPackageSet.add("import org.springframework.data.annotation.Id;");
+            }
+            myBatisEntityFiled.setAnnotation(annoantaionList);
 
             // 5. 根据MySQL数据类型与Java数据类型映射表 设置数据类型
             String javaType = MySQLJavaTypeMappingEnum.MySQlTypeToJavaType(map.get("DATA_TYPE").toString());
@@ -91,7 +103,7 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
         templatePramMap.put("importPackageSet", importPackageSet);
 
         try {
-            return freeMakerUtils.writeToTemplate(configuration, "/templates/mybatisplus", "entity.ftl", templatePramMap);
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateGroup(), "entity.ftl", templatePramMap);
         } catch (Exception e) {
             log.error("实体类生成失败，错误信息:{}", e.getMessage());
             return null;
@@ -111,7 +123,7 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
         templatePramMap.put("className", className);
 
         try {
-            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateName(), "dao.ftl", templatePramMap);
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateGroup(), "dao.ftl", templatePramMap);
         } catch (Exception e) {
             log.error("实体类生成失败，错误信息:{}", e.getMessage());
             return null;
@@ -130,7 +142,7 @@ public class MyBatisPlusGnerateSeviceImpl implements IGenerateService {
         templatePramMap.put("className", className);
 
         try {
-            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateName(), "service.ftl", templatePramMap);
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateGroup(), "service.ftl", templatePramMap);
         } catch (Exception e) {
             log.error("实体类生成失败，错误信息:{}", e.getMessage());
             return null;

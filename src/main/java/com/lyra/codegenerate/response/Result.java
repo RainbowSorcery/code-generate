@@ -62,4 +62,8 @@ public class Result <T> {
     public void setData(T data) {
         this.data = data;
     }
+
+    public static <T> Result<T> ok(T data) {
+        return new Result<>(200, "success", true, data);
+    }
 }

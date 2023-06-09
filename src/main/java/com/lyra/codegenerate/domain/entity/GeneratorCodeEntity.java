@@ -13,6 +13,14 @@ public class GeneratorCodeEntity {
     @Schema(description = "代码内容")
     private String content;
 
+    public GeneratorCodeEntity() {
+    }
+
+    public GeneratorCodeEntity(String className, String content) {
+        this.className = className;
+        this.content = content;
+    }
+
     public String getClassName() {
         return className;
     }

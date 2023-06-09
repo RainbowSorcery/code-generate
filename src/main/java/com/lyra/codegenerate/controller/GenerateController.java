@@ -1,35 +1,22 @@
 package com.lyra.codegenerate.controller;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.core.util.ZipUtil;
-import com.lyra.codegenerate.domain.entity.TableInfo;
 import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
 import com.lyra.codegenerate.response.Result;
 import com.lyra.codegenerate.service.IGenerateService;
-import com.lyra.codegenerate.utils.FileUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.io.*;
-import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/generate")
 @Tag(name = "代码生成器Controller")
+@CrossOrigin
 public class GenerateController {
     @Autowired
-    @Qualifier(value = "myBatisPlusGnerateSeviceImpl")
+    @Qualifier(value = "myBatisPlusGenerateMilosevic")
     private IGenerateService mybatisPlustGenerateService;
 
     @PostMapping("/generatorCode")

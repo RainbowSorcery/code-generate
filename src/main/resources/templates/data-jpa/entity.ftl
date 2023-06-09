@@ -1,17 +1,17 @@
 package ${packageName}.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModelProperty;
+import jakarta.persistence.Entity;
+import org.springframework.data.annotation.Id;
 
 <#list importPackageSet as item>
 ${item}
 </#list>
 
-@TableName("${tableName}")
+@Entity
 public class ${className} {
 <#list filedList as item>
     <#list item.annotation as ano>
-        ${ano}
+    ${ano}
     </#list>
     private ${item.type} ${item.name};
 
@@ -19,11 +19,11 @@ public class ${className} {
 
 <#list filedList as item>
     public ${item.type}  get${item.getSetName}() {
-        return this.${item.name};
+    return this.${item.name};
     }
 
     public void set${item.getSetName}(${item.type} ${item.name}) {
-        this.${item.name} = ${item.name};
+    this.${item.name} = ${item.name};
     }
 </#list>
 

@@ -1,7 +1,7 @@
 package ${packageName}.controller;
 
 import ${packageName}.common.utils.Result;
-import ${packageName}.domain.entity.Attachment;
+import ${packageName}.domain.entity.${className};
 import ${packageName}.service.${className}Service;
 
 

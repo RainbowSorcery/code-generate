@@ -2,6 +2,8 @@ package com.lyra.codegenerate.domain.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.List;
+
 /**
  * Mybatis plus entity成员变量字段
  */
@@ -11,14 +13,25 @@ public class MyBatisEntityFiled {
     @Schema(description = "字段名称")
     private String name;
 
-    @Schema(description = "swagger注解")
-    private String annotation;
+    @Schema(description = "注解")
+    private List<String> annotation;
 
     @Schema(description = "是否为主键")
     private Boolean pk;
 
     @Schema(description = "getSet字段名称")
     private String getSetName;
+
+    public MyBatisEntityFiled() {
+    }
+
+    public MyBatisEntityFiled(String type, String name, List<String> annotation, Boolean pk, String getSetName) {
+        this.type = type;
+        this.name = name;
+        this.annotation = annotation;
+        this.pk = pk;
+        this.getSetName = getSetName;
+    }
 
     public String getGetSetName() {
         return getSetName;
@@ -52,11 +65,11 @@ public class MyBatisEntityFiled {
         this.name = name;
     }
 
-    public String getAnnotation() {
+    public List<String> getAnnotation() {
         return annotation;
     }
 
-    public void setAnnotation(String annotation) {
+    public void setAnnotation(List<String> annotation) {
         this.annotation = annotation;
     }
 }

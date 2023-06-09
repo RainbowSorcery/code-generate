@@ -2,8 +2,7 @@ spring:
   freemarker:
     cache: false
     suffix: .flt
+  datasource:
+    url: jdbc:mysql://192.168.158.222:3306/
 server:
   port: 5600
-logging:
-  level:
-    root: debug
