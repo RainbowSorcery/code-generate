@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
 * @author qiaolonglong@tracetech.cn
-* @date 2023/4/26
+* @date ${.now?string("yyyy/MM/dd")}
 * @Description
 */
 @Service

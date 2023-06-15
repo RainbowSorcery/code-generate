@@ -1,7 +1,6 @@
 package com.lyra.codegenerate.service;
 
-import com.lyra.codegenerate.domain.entity.TableInfo;
-import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
+import com.lyra.codegenerate.domain.dto.MysqlDTO;
 
 /**
  * @author qiaolonglong@tracetech.cn

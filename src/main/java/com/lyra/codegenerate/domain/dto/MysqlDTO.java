@@ -1,4 +1,4 @@
-package com.lyra.codegenerate.domain.entity.dto;
+package com.lyra.codegenerate.domain.dto;
 
 import com.lyra.codegenerate.domain.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,8 +20,8 @@ public class MysqlDTO extends BaseEntity {
     @Schema(description = "数据库名称")
     private String database;
 
-    @Schema(description = "模板名称")
-    public String templateGroup;
+    @Schema(description = "模板id")
+    public Long templateGroupId;
 
     @Schema(description = "swagger版本 0: 不适应swagger; 1: swagger2; 2: swagger3")
     private Integer swaggerStatus;
@@ -45,12 +45,12 @@ public class MysqlDTO extends BaseEntity {
         this.swaggerStatus = swaggerStatus;
     }
 
-    public String getTemplateGroup() {
-        return templateGroup;
+    public Long getTemplateGroupId() {
+        return templateGroupId;
     }
 
-    public void setTemplateGroup(String templateGroup) {
-        this.templateGroup = templateGroup;
+    public void setTemplateGroupId(Long templateGroupId) {
+        this.templateGroupId = templateGroupId;
     }
 
     public String getDatabase() {

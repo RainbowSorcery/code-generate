@@ -3,6 +3,7 @@ package com.lyra.codegenerate.domain.entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.Date;
 
@@ -10,6 +11,7 @@ import java.util.Date;
  * 模板组
  */
 @Entity
+@Table(name = "t_template_group")
 public class TemplateGroup {
     @Schema(description = "创建时间")
     private Date createTime;

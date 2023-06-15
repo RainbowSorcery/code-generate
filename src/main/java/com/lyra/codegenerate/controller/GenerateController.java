@@ -1,6 +1,7 @@
 package com.lyra.codegenerate.controller;
 
-import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
+import com.lyra.codegenerate.domain.dto.MysqlDTO;
+import com.lyra.codegenerate.enums.GenerateType;
 import com.lyra.codegenerate.response.Result;
 import com.lyra.codegenerate.service.IGenerateService;
 import io.swagger.v3.oas.annotations.Operation;

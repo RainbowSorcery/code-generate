@@ -11,7 +11,7 @@ ${item}
 public class ${className} {
 <#list filedList as item>
     <#list item.annotation as ano>
-        ${ano}
+    ${ano}
     </#list>
     private ${item.type} ${item.name};
 

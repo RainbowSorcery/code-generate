@@ -1,4 +1,4 @@
-package com.lyra.codegenerate.controller;
+package com.lyra.codegenerate.enums;
 
 /**
  * 代码生成类型

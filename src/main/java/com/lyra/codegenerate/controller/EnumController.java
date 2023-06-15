@@ -1,15 +1,20 @@
 package com.lyra.codegenerate.controller;
 
+import com.lyra.codegenerate.domain.vo.TemplateGroupTreeVO;
+import com.lyra.codegenerate.enums.GenerateType;
 import com.lyra.codegenerate.enums.SwaggerStatusEnums;
 import com.lyra.codegenerate.response.Result;
+import com.lyra.codegenerate.service.ITemplateGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,6 +22,9 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/enums")
 public class EnumController {
+    @Autowired
+    private ITemplateGroupService templateGroupService;
+
     @GetMapping("/swaggerStatusEnum")
     @Operation(summary = "swagger类型枚举")
     public Result<Map<Object, Object>> swaggerStatusEnum() {
@@ -37,5 +45,11 @@ public class EnumController {
         }
 
         return Result.ok(resultMap);
+    }
+
+    @GetMapping("/templateGroupTree")
+    @Operation(summary = "模板类型树")
+    private Result<List<TemplateGroupTreeVO>> templateGroupTree() {
+        return templateGroupService.templateGroupTree();
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
 * @author qiaolonglong@tracetech.cn
-* @date 2023/4/25
+* @date ${.now?string("yyyy/MM/dd")}
 * @Description
 */
 @Repository

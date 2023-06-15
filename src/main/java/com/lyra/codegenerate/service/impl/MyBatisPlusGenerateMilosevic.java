@@ -2,10 +2,12 @@ package com.lyra.codegenerate.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.lyra.codegenerate.domain.entity.MyBatisEntityFiled;
-import com.lyra.codegenerate.domain.entity.dto.MysqlDTO;
+import com.lyra.codegenerate.domain.dto.MysqlDTO;
+import com.lyra.codegenerate.domain.entity.TemplateGroup;
 import com.lyra.codegenerate.enums.MySQLJavaTypeMappingEnum;
 import com.lyra.codegenerate.enums.SwaggerStatusEnums;
 import com.lyra.codegenerate.service.IGenerateService;
+import com.lyra.codegenerate.service.ITemplateGroupService;
 import com.lyra.codegenerate.utils.FreeMakerUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import freemarker.template.Configuration;
@@ -31,9 +33,12 @@ public class MyBatisPlusGenerateMilosevic implements IGenerateService {
     @Autowired
     private FreeMakerUtils freeMakerUtils;
 
+    @Autowired
+    private ITemplateGroupService templateGroupService;
+
     @Override
     public String entity(MysqlDTO mysqlDTO) {
-        if (StrUtil.isBlank(mysqlDTO.getTemplateGroup())) {
+        if (mysqlDTO.getTemplateGroupId() == null) {
             throw new RuntimeException("模板类型为空");
         }
 
@@ -102,13 +107,37 @@ public class MyBatisPlusGenerateMilosevic implements IGenerateService {
         templatePramMap.put("filedList", myBatisEntityFileds);
         templatePramMap.put("importPackageSet", importPackageSet);
 
+
         try {
-            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateGroup(), "entity.ftl", templatePramMap);
+            String templateGroupName = getTemplateGroupName(mysqlDTO.getTemplateGroupId());
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + templateGroupName, "entity.ftl", templatePramMap);
         } catch (Exception e) {
             log.error("实体类生成失败，错误信息:{}", e.getMessage());
             return null;
         }
 
+    }
+
+    private String getTemplateGroupName(Long groupId) {
+        List<String> templateGroupList = new ArrayList<>();
+
+        TemplateGroup templateGroup = templateGroupService.getById(groupId);
+
+        templateGroupList.add(templateGroup.getGroupName());
+        while (templateGroup.getParentId() != 0) {
+            templateGroup = templateGroupService.getById(templateGroup.getParentId());
+            templateGroupList.add(templateGroup.getGroupName());
+        }
+
+        StringBuilder templateGroupName = new StringBuilder();
+
+        for (int i = templateGroupList.size(); i > 0; i--) {
+            templateGroupName.append(templateGroupList.get(i - 1)).append("/");
+        }
+
+        log.info("templateGroup:{}", templateGroupName.toString());
+
+        return templateGroupName.toString();
     }
 
     @Override
@@ -123,7 +152,9 @@ public class MyBatisPlusGenerateMilosevic implements IGenerateService {
         templatePramMap.put("className", className);
 
         try {
-            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateGroup(), "dao.ftl", templatePramMap);
+            String templateGroupName = getTemplateGroupName(mysqlDTO.getTemplateGroupId());
+
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + templateGroupName, "dao.ftl", templatePramMap);
         } catch (Exception e) {
             log.error("实体类生成失败，错误信息:{}", e.getMessage());
             return null;
@@ -142,7 +173,8 @@ public class MyBatisPlusGenerateMilosevic implements IGenerateService {
         templatePramMap.put("className", className);
 
         try {
-            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + mysqlDTO.getTemplateGroup(), "service.ftl", templatePramMap);
+            String templateGroupName = getTemplateGroupName(mysqlDTO.getTemplateGroupId());
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + templateGroupName, "service.ftl", templatePramMap);
         } catch (Exception e) {
             log.error("实体类生成失败，错误信息:{}", e.getMessage());
             return null;
@@ -151,6 +183,22 @@ public class MyBatisPlusGenerateMilosevic implements IGenerateService {
 
     @Override
     public String controller(MysqlDTO mysqlDTO) {
-        return null;
+        if (StrUtil.isBlank(mysqlDTO.getTableName())) {
+            throw new RuntimeException("类名称为空");
+        }
+
+        Map<String, Object> templatePramMap = new HashMap<>();
+        templatePramMap.put("packageName", mysqlDTO.getPackageName());
+        String className = StrUtil.upperFirst(StrUtil.toCamelCase(mysqlDTO.getTableName()));
+        templatePramMap.put("className", className);
+        templatePramMap.put("subClassName", StrUtil.lowerFirst(className));
+
+        try {
+            String templateGroupName = getTemplateGroupName(mysqlDTO.getTemplateGroupId());
+            return freeMakerUtils.writeToTemplate(configuration, "/templates/" + templateGroupName, "controller.ftl", templatePramMap);
+        } catch (Exception e) {
+            log.error("实体类生成失败，错误信息:{}", e.getMessage());
+            return null;
+        }
     }
 }
